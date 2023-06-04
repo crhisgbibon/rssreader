@@ -174,8 +174,6 @@ class ControllerRSSReader extends Controller
 
   public function SearchWord(Request $request)
   {
-    // set offset to 0?
-
     date_default_timezone_set("UTC");
 
     $startDate = (string)$request->data[0] . " 00:00:00";
@@ -196,8 +194,16 @@ class ControllerRSSReader extends Controller
 
     $readerData = $readerModel->GetItemsWithSearchWord($dateRange, $category, $group, $title, $searchWord);
     $readerData = json_decode(json_encode($readerData), true);
+    $count = count($items);
+    $offset = (int)session('rssOffset');
+    $itemRange = json_encode([
+      'offset' =>$offset, 
+      'count' => $count
+    ]);
+
     return view('components.RSSReader.readerList', [
       'items' => $readerData,
+      'range' => $itemRange,
     ]);
   }
 
@@ -284,9 +290,16 @@ class ControllerRSSReader extends Controller
 
     $items = $readerModel->GetRandomTick($dateRange, $category, $group, $title, $toggleItems);
     $items = json_decode(json_encode($items), true);
+    $count = count($items);
+    $offset = (int)session('rssOffset');
+    $itemRange = json_encode([
+      'offset' =>$offset, 
+      'count' => $count
+    ]);
 
     return view('components.RSSReader.readerList', [
       'items' => $items,
+      'range' => $itemRange,
     ]);
   }
 

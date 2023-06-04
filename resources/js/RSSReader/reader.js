@@ -325,13 +325,14 @@ function Tick()
     success:function(result)
     {
       rContents.innerHTML = result;
+      let newOffset = document.getElementById('OFFSET_DATA').dataset.offset;
+      rItemCount.innerHTML = newOffset;
       Headlines();
       AnimateFromRight(rContents);
       ReAssign();
     },
-    error:function(result)
+    error:function()
     {
-
     }
   });
 }
