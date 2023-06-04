@@ -1,4 +1,6 @@
 <?php
+  $rangeData = json_decode($range);
+  echo '<div hidden id="OFFSET_DATA" data-offset='.$rangeData->offset.' data-count='.$rangeData->count.'></div>';
   $count = count($items);
   if($count === 0)
   {

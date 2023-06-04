@@ -1,7 +1,6 @@
 <div id="sView">
 
   <div id="sOptions">
-    {{-- <button class="sControlClass" id="sForce"><img id="sForce" src="{{ asset('storage/Assets/undoLight.svg') }}"></button> --}}
     <button class="sControlClass" id="sSort"><img id="sSort" src="{{ asset('storage/Assets/sortAZLight.svg') }}"></button>
     <input class="sControlClass" type="text" id="sFind" placeholder="Search...">
     <button class="sControlClass" id="sNewSource"><img id="i_sNewSource" src="{{ asset('storage/Assets/plusLight.svg') }}"></button>

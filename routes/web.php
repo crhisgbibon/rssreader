@@ -18,37 +18,39 @@ use App\Http\Controllers\RSSReader\ControllerRSSReader;
 
 Route::get('/', function(){
   return redirect('/reader');
-})->middleware(['auth', 'verified'])->name('rssreader');
+})->name('rssreader');
 
 Route::controller(ControllerRSSReader::class)->group(function () {
-  Route::get('/reader', 'index')->middleware(['auth', 'verified'])->name('rssreaderreader');
-  Route::get('/sources', 'sources')->middleware(['auth', 'verified'])->name('rssreadersources');
-  Route::get('/user', 'profile')->middleware(['auth', 'verified'])->name('rssreaderprofile');
 
-  Route::post('/GETRSS', 'GetRSS')->middleware(['auth', 'verified'])->name('rssreaderGetRss');
-  Route::post('/OFFSETMINUS', 'OffsetMinus')->middleware(['auth', 'verified'])->name('rssreaderOffsetMinus');
-  Route::post('/OFFSETPLUS', 'OffsetPlus')->middleware(['auth', 'verified'])->name('rssreaderOffsetPlus');
+  // normal users - reader page
+  Route::get('/reader', 'index')->name('rssreaderreader');
 
-  Route::post('/WORDS', 'Words')->middleware(['auth', 'verified'])->name('rssreaderWords');
-  Route::post('/SEARCHWORD', 'SearchWord')->middleware(['auth', 'verified'])->name('rssreaderSearchWord');
+  Route::post('/GETRSS', 'GetRSS')->name('rssreaderGetRss');
+  Route::post('/OFFSETMINUS', 'OffsetMinus')->name('rssreaderOffsetMinus');
+  Route::post('/OFFSETPLUS', 'OffsetPlus')->name('rssreaderOffsetPlus');
 
+  Route::post('/WORDS', 'Words')->name('rssreaderWords');
+  Route::post('/SEARCHWORD', 'SearchWord')->name('rssreaderSearchWord');
+
+  Route::post('/TICK', 'GetTick')->name('rssreaderGetTick');
+
+  // need to be logged in to save items or access profile pages
   Route::post('/SAVEITEM', 'SaveItem')->middleware(['auth', 'verified'])->name('rssreaderSaveItem');
 
-  Route::post('/SOURCE', 'EditSource')->middleware(['auth', 'verified'])->name('rssreaderEditSource');
-  Route::post('/DELETESOURCE', 'DeleteSource')->middleware(['auth', 'verified'])->name('rssreaderDeleteSource');
-  Route::post('/FORCE', 'ForceUpdate')->middleware(['auth', 'verified'])->name('rssreaderForceUpdate');
-  Route::post('/TICK', 'GetTick')->middleware(['auth', 'verified'])->name('rssreaderGetTick');
+  // normal users - saved items page
+  Route::get('/user', 'profile')->middleware(['auth', 'verified'])->name('rssreaderprofile');
+
   Route::post('/GETSAVED', 'GetSaved')->middleware(['auth', 'verified'])->name('rssreaderGetSaved');
   Route::post('/DELETESAVED', 'DeleteSaved')->middleware(['auth', 'verified'])->name('rssreaderDeleteSaved');
+
+
+  // admin only - manage sources
+  Route::get('/sources', 'sources')->middleware(['auth', 'verified', 'is_admin'])->name('rssreadersources');
+  Route::post('/SOURCE', 'EditSource')->middleware(['auth', 'verified', 'is_admin'])->name('rssreaderEditSource');
+  Route::post('/DELETESOURCE', 'DeleteSource')->middleware(['auth', 'verified', 'is_admin'])->name('rssreaderDeleteSource');
+  Route::post('/FORCE', 'ForceUpdate')->middleware(['auth', 'verified', 'is_admin'])->name('rssreaderForceUpdate');
+  Route::post('/TEST', 'TEST')->middleware(['auth', 'verified', 'is_admin'])->name('rssreaderTEST');
 });
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

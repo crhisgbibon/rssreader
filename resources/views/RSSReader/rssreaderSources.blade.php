@@ -204,14 +204,13 @@
       min-height: calc(var(--vh) * 5);
       width: 90%;
       border-radius: 12px;
-      margin: 4px;
+      margin: 12px;
       padding: 12px;
       cursor: pointer;
       overflow: hidden;
       white-space: nowrap;
-      display: flex;
-      justify-content: start;
-      align-items: center;
+      text-overflow: ellipsis;
+      line-height: 1;
     }
 
     .sCardLink:hover{
@@ -286,8 +285,8 @@
       position: fixed;
       background-color: var(--background);
       width: 100%;
-      height: calc(var(--vh) * 75);
-      max-height: calc(var(--vh) * 75);
+      height: calc(var(--vh) * 82.5);
+      max-height: calc(var(--vh) * 82.5);
       margin: 4px;
       padding: 4px;
       overflow-y: scroll;
@@ -356,8 +355,8 @@
       position: fixed;
       background-color: var(--background);
       width: 100%;
-      height: calc(var(--vh) * 75);
-      max-height: calc(var(--vh) * 75);
+      height: calc(var(--vh) * 82.5);
+      max-height: calc(var(--vh) * 82.5);
       margin: 4px;
       padding: 4px;
       overflow-y: scroll;
@@ -431,6 +430,8 @@
   <x-slot name="appName">
     {{ __('RSS Sources') }}
   </x-slot>
+
+  {{-- <button id='TESTBUTTON' class='border-2 border-black m-2 p-2'>Test</button> --}}
 
   <div id="messageBoxHolder" style="display:none;"><div id="messageBox"></div></div>
 

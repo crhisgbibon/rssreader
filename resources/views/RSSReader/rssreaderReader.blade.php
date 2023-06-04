@@ -112,6 +112,11 @@
       align-items: center;
     }
 
+    #rOptionsTop div{
+      width: calc(100% / 3);
+      max-width: calc(100% / 3);
+    }
+
     #rOptionsBot{
       width: 100%;
       max-width: 600px;
@@ -123,13 +128,23 @@
       align-items: center;
     }
 
+    #rOptionsStart{
+      width: 100%;
+    }
+
+    #rOptionsEnd{
+      width: 100%;
+    }
+
+    #rRefresh{
+      width: 50px;
+    }
+
     #rRefresh:hover{
       background-color: var(--backgroundLight);
     }
 
     .rControlClass{
-      width: calc(100% / 3);
-      max-width: calc(100% / 3);
       height: 100%;
       margin: 0;
       padding: 0;
@@ -384,6 +399,15 @@
       width: 100%;
     }
 
+    #rItemCount{
+      min-width: 50px;
+      max-width: 100px;
+      box-sizing: border-box;
+      border: 1px solid var(--grey);
+      border-radius: 6px;
+      padding: 4px;
+    }
+
     #rControlsBox button:hover{
       background-color: var(--backgroundLight);
     }
@@ -465,6 +489,6 @@
 
   <div id="messageBoxHolder" style="display:none;"><div id="messageBox"></div></div>
 
-  <x-RSSReader.reader :readercategories="$readercategories" :readerchannels="$readerchannels" :readergroups="$readergroups" :items="$items" :now="$now"/>
+  <x-RSSReader.reader :readercategories="$readercategories" :readerchannels="$readerchannels" :readergroups="$readergroups" :items="$items" :range="$range" :now="$now" :weekago="$weekago"/>
 
 </x-app-layout>

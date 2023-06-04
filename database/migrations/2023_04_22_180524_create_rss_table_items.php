@@ -17,15 +17,13 @@ return new class extends Migration
           $table->integer('sourceID');
 
           $table->string('itemTitle', 255);
-          $table->string('itemLink', 1000);
+          $table->string('itemLink', 500)->unique();
           $table->string('itemDescription', 1000);
           $table->integer('itemDate');
 
           $table->string('channelTitle', 255);
           $table->string('channelLink', 255);
           $table->string('channelDescription', 255);
-
-          $table->string('uniqueString', 250);
 
           $table->tinyInteger('hiddenRow');
         });

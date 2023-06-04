@@ -70,7 +70,7 @@ function Post(trigger)
   $.ajax(
   {
     method: "POST",
-    url: "/rssreader/" + trigger,
+    url: trigger,
     headers:
     {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

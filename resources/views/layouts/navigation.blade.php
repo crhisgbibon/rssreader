@@ -2,25 +2,37 @@
   <!-- Primary Navigation Menu -->
   <div class="mx-auto w-full">
 
-    <div class="flex flex-row items-center w-full bg-white border-b border-gray-100 justify-between sm:justify-center " style="min-height:calc(var(--vh) * 7.5)">
+    <div class="flex flex-row items-center align-center w-full bg-white border-b border-gray-100 justify-between sm:justify-center " style="min-height:calc(var(--vh) * 7.5)">
 
       <!-- Navigation Links -->
       <div class="hidden sm:flex min-w-40 w-1/3 ml-2 h-full justify-center items-center">
         <x-nav-link :href="url('/')" class="h-full" :active="request()->routeIs('/')" style="min-height:calc(var(--vh) * 7.5)">
-          {{ __('RSSReader') }}
+          {{ __('RSSReader') }} 
         </x-nav-link>
       </div>
 
-      <div class="flex w-full max-w-6xl flex-row justify-center mx-auto" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)">
+      <div class="flex w-full max-w-6xl flex-row justify-center align-center mx-auto" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)">
         <x-nav-link :href="route('rssreaderreader')" class="flex justify-center items-center mx-4" :active="request()->routeIs('rssreaderreader')">
           <img class="w-11/12 h-11/12" src="{{ asset('storage/Assets/listLight.svg') }}">
-        </x-nav-link>
-        <x-nav-link :href="route('rssreadersources')" class="flex justify-center items-center mx-4" :active="request()->routeIs('rssreadersources')">
-          <img class="w-11/12 h-11/12" src="{{ asset('storage/Assets/databaseLight.svg') }}">
         </x-nav-link>
         <x-nav-link :href="route('rssreaderprofile')" class="flex justify-center items-center mx-4" :active="request()->routeIs('rssreaderprofile')">
           <img class="w-11/12 h-11/12" src="{{ asset('storage/Assets/saveLight.svg') }}">
         </x-nav-link>
+
+        @if (request()->routeIs('rssreaderreader'))
+
+          <x-nav-link class="flex justify-center items-center mx-4 cursor-pointer" id='HIDE_FILTERS'>
+            <img class="w-11/12 h-11/12" src="{{ asset('storage/Assets/eyeLight.svg') }}">
+          </x-nav-link>
+
+        @endif
+
+        @can('access_admin')
+          <x-nav-link :href="route('rssreadersources')" class="flex justify-center items-center mx-4" :active="request()->routeIs('rssreadersources')">
+            <img class="w-11/12 h-11/12" src="{{ asset('storage/Assets/databaseLight.svg') }}">
+          </x-nav-link>
+        @endcan
+
       </div>
 
       <!-- Settings Dropdown -->

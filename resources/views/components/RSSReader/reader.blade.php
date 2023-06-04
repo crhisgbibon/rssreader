@@ -58,7 +58,7 @@
     </div>
     <div id="rOptionsBot">
       <div class="rControlClass">
-        <input type="date" id="rOptionsStart" value="<?php echo date("Y-m-d", $now); ?>">
+        <input type="date" id="rOptionsStart" value="<?php echo date("Y-m-d", $weekago); ?>">
       </div>
       <div class="rControlClass rControlCentre">
         <input type="date" id="rOptionsEnd" value="<?php echo date("Y-m-d", $now); ?>">
@@ -70,7 +70,7 @@
   </div>
 
   <div id="rContents">
-    <x-RSSReader.readerList :items="$items" />
+    <x-RSSReader.readerList :items="$items" :range="$range"/>
   </div>
 
   <div id="rTickOptions" class="fixed z-10 bg-white flex w-full flex-col justify-start mx-auto overflow-y-auto">
@@ -92,6 +92,7 @@
       <button id='rLast100'><img src="{{ asset('storage/Assets/chevronLeftLight.svg') }}"></button>
       <button id='rHeadline'><img id="i_rHeadline" src="{{ asset('storage/Assets/eyeLight.svg') }}"></button>
       <button id='rTicker'><img id="i_rTicker" src="{{ asset('storage/Assets/playCircledLight.svg') }}"></button>
+      <div id='rItemCount'><?php $range = json_decode($range); echo $range->offset; ?></div>
       <button id='rTickToggle'><img id="i_rOptions" src="{{ asset('storage/Assets/optionsLight.svg') }}"></button>
       <button id='rWords'><img id="i_rWords" src="{{ asset('storage/Assets/leaderboardLight.svg') }}"></button>
       <button id='rNext100'><img src="{{ asset('storage/Assets/chevronRightLight.svg') }}"></button>

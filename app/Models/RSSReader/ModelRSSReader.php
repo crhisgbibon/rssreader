@@ -19,8 +19,6 @@ class ModelRSSReader extends Model
     $start = $dateData[0];
     $end = $dateData[1];
 
-    $offset = 0;
-
     $group = (string)trim($group);
     $category = (string)trim($category);
     $title = (string)trim($title);
@@ -39,8 +37,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category !== "-1" && $group !== "-1" && $title !== "-1")
@@ -61,8 +59,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category === "-1" && $group !== "-1" && $title !== "-1")
@@ -82,8 +80,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category !== "-1" && $group === "-1" && $title !== "-1")
@@ -103,8 +101,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category !== "-1" && $group !== "-1" && $title === "-1")
@@ -124,8 +122,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category !== "-1" && $group === "-1" && $title === "-1")
@@ -144,8 +142,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category === "-1" && $group !== "-1" && $title === "-1")
@@ -164,8 +162,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else if($category === "-1" && $group === "-1" && $title !== "-1")
@@ -184,8 +182,8 @@ class ModelRSSReader extends Model
       ->where('rss_table_items.itemDate', '>=', $start)
       ->where('rss_table_items.itemDate', '<=', $end)
       ->orderBy('rss_table_items.itemDate', 'desc')
-      ->offset($offset)
-      ->limit(100)
+      ->skip($offset)
+      ->take(100)
       ->get();
     }
     else
@@ -336,7 +334,7 @@ class ModelRSSReader extends Model
 
   public function ProcessWords($wordData)
   {
-    $stopWords = Storage::get('rssreader/stopwords.txt');
+    $stopWords = Storage::get('public/rssreader/stopwords.txt');
     $stopArray = explode("\n",$stopWords);
     $text = str_replace(array("\n", "\r"), '', $stopArray);
     $stopArray = array_unique($text);
@@ -365,7 +363,7 @@ class ModelRSSReader extends Model
           if(in_array(strtolower($shortWord), $stopArray, true) === false)
           {
             $words[$shortWord]["word"] = $shortWord;
-            $words[$shortWord]["count"] = 0;
+            $words[$shortWord]["count"] = 1;
             array_push($debugArray, $shortWord);
           }
         }
@@ -529,6 +527,7 @@ class ModelRSSReader extends Model
   public function AddSource($title, $link, $group, $category, $country)
   {
     $userID = Auth::id();
+    $now = strtotime("now");
     DB::table('rss_table_sources')->insert([
       'userID' => $userID,
       'sourceTitle' => $title,
@@ -536,12 +535,14 @@ class ModelRSSReader extends Model
       'groupName' => $group,
       'category' => $category,
       'country' => $country,
+      'updated_at' => $now,
       'hiddenRow' => 0
     ]);
   }
 
   public function UpdateSource($index, $title, $link, $group, $category, $country)
   {
+    $now = strtotime("now");
     DB::table('rss_table_sources')
     ->where('uniqueIndex', "=", $index)
     ->update(['sourceTitle' => $title,
@@ -549,6 +550,7 @@ class ModelRSSReader extends Model
       'groupName' => $group,
       'category' => $category,
       'country' => $country,
+      'updated_at' => $now,
     ]);
   }
 
@@ -747,8 +749,8 @@ class ModelRSSReader extends Model
     ->where('rss_table_saved.hiddenRow', '=', 0)
     ->where('rss_table_saved.userID', $userID)
     ->orderBy('rss_table_items.itemDate', 'desc')
-    ->offset($offset)
-    ->limit(100)
+    ->skip($offset)
+    ->take(100)
     ->get();
   }
 

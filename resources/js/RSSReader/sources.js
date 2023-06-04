@@ -1,5 +1,8 @@
 "use strict";
 
+// const TESTBUTTON = document.getElementById('TESTBUTTON');
+// TESTBUTTON.onclick = function() { Post('TEST'); };
+
 const messageBoxHolder = document.getElementById("messageBoxHolder");
 const messageBox = document.getElementById("messageBox");
 messageBoxHolder.onclick = function() { TogglePanel(messageBoxHolder); };
@@ -121,7 +124,7 @@ function Post(trigger)
   $.ajax(
   {
     method: "POST",
-    url: "/rssreader/" + trigger,
+    url: trigger,
     headers:
     {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -132,7 +135,6 @@ function Post(trigger)
     },
     success:function(result)
     {
-      console.log(result);
       sDisplay.innerHTML = result;
       if(trigger === "SOURCE") MessageBox("Source updated.");
       if(trigger === "DELETESOURCE") MessageBox("Source deleted.");

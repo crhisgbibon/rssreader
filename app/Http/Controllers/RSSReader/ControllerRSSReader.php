@@ -9,9 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 use App\Models\RSSReader\ModelRSSReader;
 use App\Models\RSSReader\CronRssReaderReadAllRss;
+
+use Illuminate\Support\Facades\Session;
 
 class ControllerRSSReader extends Controller
 {
@@ -22,25 +25,25 @@ class ControllerRSSReader extends Controller
    * @return \Illuminate\Http\Response
    */
 
+  public function constructor()
+  {
+    if(!session()->has('rssOffset'))
+    {
+      session(['rssOffset' => 0]);
+    }
+  }
+
   public function index(Request $request)
   {
     date_default_timezone_set("UTC");
-    $startTime = strtotime("today");
-    $endTime = strtotime("now");
+    $startTime = strtotime('-1 week');
+    $endTime = strtotime('today');
     $dateRange = [$startTime, $endTime];
 
     $category = "-1";
     $group = "-1";
     $title = "-1";
-    if($request->session()->has('rssOffset'))
-    {
-      $offset = (int)session('rssOffset');
-    }
-    else
-    {
-      session(['rssOffset' => 0]);
-      $offset = (int)session('rssOffset');
-    }
+    $offset = (int)session('rssOffset');
 
     $model = new ModelRSSReader();
 
@@ -50,6 +53,11 @@ class ControllerRSSReader extends Controller
 
     $items = $model->GetItems($dateRange, $category, $group, $title, $offset);
     $items = json_decode(json_encode($items), true);
+    $count = count($items);
+    $itemRange = json_encode([
+      'offset' =>$offset, 
+      'count' => $count
+    ]);
 
     $now = time();
 
@@ -58,7 +66,9 @@ class ControllerRSSReader extends Controller
       'readercategories' => $readerCategories,
       'readerchannels' => $readerChannels,
       'readergroups' => $readerGroups,
-      'now' => $now
+      'now' => $now,
+      'weekago' => $startTime,
+      'range' => $itemRange,
     ]);
   }
 
@@ -68,21 +78,19 @@ class ControllerRSSReader extends Controller
     $model = new ModelRSSReader();
     $userID = Auth::id();
 
-    if($request->session()->has('rssOffset'))
-    {
-      $offset = (int)session('rssOffset');
-    }
-    else
-    {
-      session(['rssOffset' => 0]);
-      $offset = (int)session('rssOffset');
-    }
+    $offset = (int)session('rssOffset');
 
     $items = $model->GetSaved($userID, $offset);
     $items = json_decode(json_encode($items), true);
+    $count = count($items);
+    $itemRange = json_encode([
+      'offset' =>$offset, 
+      'count' => $count
+    ]);
 
     return view('RSSReader.rssreaderProfile', [
-      'items' => $items
+      'items' => $items,
+      'range' => $itemRange,
     ]);
   }
 
@@ -103,52 +111,37 @@ class ControllerRSSReader extends Controller
     $group = (string)$request->data[3];
     $title = (string)$request->data[4];
 
-    if($request->session()->has('rssOffset'))
-    {
-      $offset = (int)session('rssOffset');
-    }
-    else
-    {
-      session(['rssOffset' => 0]);
-      $offset = (int)session('rssOffset');
-    }
+    $offset = (int)session('rssOffset');
 
     $items = $readerModel->GetItems($dateRange, $category, $group, $title, $offset);
     $items = json_decode(json_encode($items), true);
+    $count = count($items);
+    $itemRange = json_encode([
+      'offset' =>$offset, 
+      'count' => $count
+    ]);
 
     return view('components.RSSReader.readerList', [
       'items' => $items,
+      'range' => $itemRange,
     ]);
   }
 
   public function OffsetPlus(Request $request)
   {
-    if($request->session()->has('rssOffset'))
-    {
-      $offset = (int)session('rssOffset');
-      $offset += 100;
-      session(['rssOffset' => $offset]);
-    }
-    else
-    {
-      session(['rssOffset' => 0]);
-    }
+    $offset = (int)session('rssOffset');
+    $offset += 100;
+    session(['rssOffset' => $offset]);
 
     return $this->GetRss($request);
   }
 
   public function OffsetMinus(Request $request)
   {
-    if($request->session()->has('rssOffset'))
-    {
-      $offset = (int)session('rssOffset');
-      if($offset > 0) $offset -= 100;
-      session(['rssOffset' => $offset]);
-    }
-    else
-    {
-      session(['rssOffset' => 0]);
-    }
+    $offset = (int)session('rssOffset');
+    if($offset > 0) $offset -= 100;
+    if($offset < 0) $offset = 0;
+    session(['rssOffset' => $offset]);
 
     return $this->GetRss($request);
   }
@@ -173,7 +166,7 @@ class ControllerRSSReader extends Controller
     $wordData = $readerModel->GetWords($dateRange, $category, $group, $title);
     $wordData = json_decode(json_encode($wordData), true);
     $processedWords = $readerModel->ProcessWords($wordData);
-  
+
     return view('components.RSSReader.readerWords', [
       'items' => $processedWords,
     ]);
@@ -218,6 +211,7 @@ class ControllerRSSReader extends Controller
 
   public function sources()
   {
+    if(!Gate::allows('access_admin')) abort(403);
     date_default_timezone_set("Europe/London");
     $model = new ModelRSSReader();
     $sourcesData = $model->GetSources();
@@ -229,6 +223,7 @@ class ControllerRSSReader extends Controller
 
   public function EditSource(Request $request)
   {
+    if(!Gate::allows('access_admin')) abort(403);
     $index = (int)$request->data[0];
     $title = (string)trim($request->data[1]);
     $link = (string)trim($request->data[2]);
@@ -248,6 +243,7 @@ class ControllerRSSReader extends Controller
 
   public function DeleteSource(Request $request)
   {
+    if(!Gate::allows('access_admin')) abort(403);
     $index = (int)$request->data[0];
 
     $model = new ModelRSSReader();
@@ -261,6 +257,7 @@ class ControllerRSSReader extends Controller
 
   public function ForceUpdate(Request $request)
   {
+    if(!Gate::allows('access_admin')) abort(403);
     $cron = new CronRssReaderReadAllRss();
     $debug = $cron->ReadAllRSS();
     return $debug;
@@ -340,5 +337,13 @@ class ControllerRSSReader extends Controller
     return view('components.RSSReader.profileList', [
       'items' => $items,
     ]);
+  }
+
+  public function TEST()
+  {
+    if(!Gate::allows('access_admin')) abort(403);
+    $job = new CronRssReaderReadAllRss();
+    $debug = $job->ReadAllRSS();
+    return $debug;
   }
 }

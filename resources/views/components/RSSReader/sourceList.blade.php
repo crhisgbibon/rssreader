@@ -16,42 +16,42 @@
 
       <div class='sCard'
       id='{$index}sCard'
-      data-index='{$index}'
-      data-search='{$title}'>
+      data-index='$index'
+      data-search='$title'>
 
         <div id='{$index}sCardTitle' class='sCardTitle'>
-          {$title}
+          $title
         </div>
 
-        <a id='{$index}sCardLink' class='sCardLink' href={$link} target='_blank' >
-          {$link}
+        <a id='{$index}sCardLink' class='sCardLink' href='$link' target='_blank' >
+          $link
         </a>
 
         <div class='sCardGroupCategoryCountry'>
           <div id='{$index}sCardCategory'>
-            {$category}
+            $category
           </div>
 
           <div id='{$index}sCardGroup'>
-            {$group}
+            $group
           </div>
         </div>
 
         <div class='sCardGroupCategoryCountry'>
           <div id='{$index}sCardCountry'>
-            {$country}
+            $country
           </div>
 
           <div id='{$index}sCardUpdated'>
-            {$gmDate}
+            $gmDate
           </div>
         </div>
 
         <div class='sButtonDiv'>
 
-          <button class='sButton modifysourcebutton' data-i={{$index}}>Modify</button>
+          <button class='sButton modifysourcebutton' data-i=$index>Modify</button>
 
-          <button class='sButton deletesourcebutton' data-i={{$index}}>Delete</button>
+          <button class='sButton deletesourcebutton' data-i=$index>Delete</button>
 
         </div>
 

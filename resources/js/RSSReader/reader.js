@@ -4,6 +4,25 @@ const messageBoxHolder = document.getElementById("messageBoxHolder");
 const messageBox = document.getElementById("messageBox");
 messageBoxHolder.onclick = function() { TogglePanel(messageBoxHolder); };
 
+const HIDE_FILTERS = document.getElementById('HIDE_FILTERS');
+HIDE_FILTERS.onclick = function(){
+
+  if(rOptions.style.display === '')
+  {
+    rOptions.style.display = 'none';
+    rContents.style.height = 'calc(var(--vh) * 87.5';
+    rContents.style.maxHeight = 'calc(var(--vh) * 87.5';
+  }
+  else
+  {
+    rOptions.style.display = '';
+    rContents.style.height = 'calc(var(--vh) * 80';
+    rContents.style.maxHeight = 'calc(var(--vh) * 80';
+  }
+
+};
+
+const rOptions = document.getElementById('rOptions');
 const rOptionsCategory = document.getElementById("rOptionsCategory");
 const rOptionsGroup = document.getElementById("rOptionsGroup");
 const rOptionsTitle = document.getElementById("rOptionsTitle");
@@ -13,6 +32,8 @@ const rOptionsEnd = document.getElementById("rOptionsEnd");
 const rRefresh = document.getElementById("rRefresh");
 
 const rContents = document.getElementById("rContents");
+
+const rItemCount = document.getElementById('rItemCount');
 
 const rTickOptions = document.getElementById("rTickOptions");
 
@@ -145,7 +166,7 @@ function Post(trigger)
   $.ajax(
   {
     method: "POST",
-    url: "/rssreader/" + trigger,
+    url: trigger,
     headers:
     {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -166,6 +187,8 @@ function Post(trigger)
         rContents.innerHTML = result;
         if(headlines) Headlines();
         ReAssign();
+        let newOffset = document.getElementById('OFFSET_DATA').dataset.offset;
+        rItemCount.innerHTML = newOffset;
       }
       if(trigger === "SAVEITEM")
       {
@@ -174,7 +197,10 @@ function Post(trigger)
     },
     error:function()
     {
-
+      if(trigger === "SAVEITEM")
+      {
+        MessageBox('You must be logged in to save items.');
+      }
     }
   });
 }
@@ -182,7 +208,6 @@ function Post(trigger)
 function ToggleHeadlines()
 {
   headlines = !headlines;
-  console.log(headlines);
   if(headlines) rHeadline.dataset.state = "selected";
   else rHeadline.dataset.state = "";
   Headlines();
@@ -252,7 +277,7 @@ function ToggleTicker()
   if(toggleTick)
   {
     headlines = true;
-    i_rTicker.src = "../assets/assets/playPauseLight.svg";
+    i_rTicker.src = "storage/Assets/playPauseLight.svg";
     Tick();
     ticker = setInterval(Tick, ( toggleTime * 1000 ) );
   }
@@ -260,13 +285,14 @@ function ToggleTicker()
   {
     headlines = false;
     EndTicker();
+    Post("GETRSS");
   }
 }
 
 function EndTicker(terminate)
 {
   toggleTick = false;
-  i_rTicker.src = "../assets/assets/playCircledLight.svg";
+  i_rTicker.src = "storage/Assets/playCircledLight.svg";
   clearInterval(ticker);
   ticker = null;
   if(terminate) Post("GETRSS");
@@ -287,7 +313,7 @@ function Tick()
   $.ajax(
   {
     method: "POST",
-    url: "/rssreader/" + "TICK",
+    url: "TICK",
     headers:
     {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
