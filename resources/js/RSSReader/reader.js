@@ -187,8 +187,13 @@ function Post(trigger)
         rContents.innerHTML = result;
         if(headlines) Headlines();
         ReAssign();
-        let newOffset = document.getElementById('OFFSET_DATA').dataset.offset;
-        rItemCount.innerHTML = newOffset;
+        if(trigger === "GETRSS" ||
+           trigger === "OFFSETPLUS" ||
+           trigger === "OFFSETMINUS")
+        {
+          let newOffset = document.getElementById('OFFSET_DATA').dataset.offset;
+          rItemCount.innerHTML = newOffset;
+        }
       }
       if(trigger === "SAVEITEM")
       {
