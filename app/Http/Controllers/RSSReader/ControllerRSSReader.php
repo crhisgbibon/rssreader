@@ -194,7 +194,7 @@ class ControllerRSSReader extends Controller
 
     $readerData = $readerModel->GetItemsWithSearchWord($dateRange, $category, $group, $title, $searchWord);
     $readerData = json_decode(json_encode($readerData), true);
-    $count = count($items);
+    $count = count($readerData);
     $offset = (int)session('rssOffset');
     $itemRange = json_encode([
       'offset' =>$offset, 

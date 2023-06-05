@@ -200,8 +200,9 @@ function Post(trigger)
         MessageBox(result);
       }
     },
-    error:function()
+    error:function(result)
     {
+      console.log(result);
       if(trigger === "SAVEITEM")
       {
         MessageBox('You must be logged in to save items.');
